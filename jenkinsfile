@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+    environment {
+        REGISTRY_NAME='21081993/basic-repo'
+        REGISTRY_CREDENTIALS = 'dockerhub-cred'
+        IMAGE_NAME="$REGISTRY_NAME:$BRANCH_NAME-$BUILD_NUMBER-${GIT_COMMIT[0..5]}"
+    }
+    stages {
+        stage('Build') {
+            agent {
+                any { image 'python:3.8.15-slim-buster' }
+            }
+            steps {
+                script {
+                    docker.withRegistry( '', REGISTRY_CREDENTIALS ) {
+                        sh """
+                            docker build . -t $IMAGE_NAME
+                            docker push $IMAGE_NAME
+                        """
+                    }
+                }
+            }
+        }
+    }
+}
