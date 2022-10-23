@@ -3,7 +3,7 @@ pipeline {
     environment {
         REGISTRY_NAME='21081993/basic-repo'
         REGISTRY_CREDENTIALS = 'dockerhub-cred'
-        IMAGE_NAME="$REGISTRY_NAME:$BRANCH_NAME-substring${BUILD_NUMBER:0:8}"
+        IMAGE_NAME="$REGISTRY_NAME:$BRANCH_NAME-${BUILD_NUMBER}-${GIT_COMMIT[0..5]}"
     }
     stages {
         stage('Build') {
