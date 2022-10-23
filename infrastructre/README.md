@@ -7,4 +7,3 @@ http://localhost:8080/
 docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 
 ssh-keygen -t rsa -f jenkins_agent
-
