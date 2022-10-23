@@ -1,15 +1,24 @@
 pipeline {
     agent any
+    environment {
+        REGISTRY_NAME='21081993/basic-repo'
+        REGISTRY_CREDENTIALS = 'dockerhub-cred'
+        IMAGE_NAME="$env.REGISTRY_NAME:$env.BRANCH_NAME-$env.BUILD_NUMBER"
+    }
     stages {
         stage('Build') {
             agent {
-                any {
-                    image 'python:2-alpine'
-                }
+                any { image 'python:3.8.15-slim-buster' }
             }
             steps {
-                sh 'python -m py_compile sources/add2vals.py sources/calc.py'
-                stash(name: 'compiled-results', includes: 'sources/*.py*')
+                script {
+                    docker.withRegistry( '', REGISTRY_CREDENTIALS ) {
+                        sh """
+                            docker build . -t $IMAGE_NAME
+                            docker push $IMAGE_NAME
+                        """
+                    }
+                }
             }
         }
     }
